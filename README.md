@@ -23,14 +23,14 @@ dieselbe waere.
 ## Aufruf
 
 ```bash
-copier copy gh:<dein-name>/python-project-template mein-neues-projekt
+copier copy gh:m4dd4mon/python-project-template mein-neues-projekt
 ```
 
 Mit expliziter Versionsangabe (empfohlen fuer reproduzierbare
 Generierung):
 
 ```bash
-copier copy --vcs-ref v0.1.0 gh:<dein-name>/python-project-template mein-neues-projekt
+copier copy --vcs-ref v0.1.0 gh:m4dd4mon/python-project-template mein-neues-projekt
 ```
 
 Beim ersten Aufruf fuehrt Copier durch den Fragenkatalog (Projektname,

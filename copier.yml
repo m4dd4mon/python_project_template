@@ -1,0 +1,19 @@
+# ── Meta-Felder ──────────────────────────────────────────────────────
+# Dateien mit dieser Endung durchlaufen die Jinja-Engine und verlieren
+# die Endung beim Rendern (z.B. pyproject.toml.jinja -> pyproject.toml).
+_templates_suffix: .jinja
+
+# Der Schablonenbaum liegt im Unterordner template/, damit die Meta-
+# Dateien des Template-Repos (README, LICENSE, diese Datei) nicht
+# versehentlich mit ins Zielprojekt wandern.
+_subdirectory: template
+
+# Schutz vor zu alten Copier-Versionen: Conditional tasks und die
+# Whitespace-Trim-Semantik verhalten sich ab 9.x zuverlaessig.
+_min_copier_version: "9.0.0"
+
+# Standarddateiname fuer die Antwort-Datei im Zielprojekt. Wird dort
+# ins Git eingecheckt und ist die Grundlage fuer spaetere copier update.
+_answers_file: .copier-answers.yml
+
+# Fragenkatalog, _exclude und _tasks folgen in spaeteren Schritten.

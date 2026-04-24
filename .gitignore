@@ -1,0 +1,17 @@
+# Gitignore fuer das Template-Repo selbst (NICHT fuer das generierte Projekt).
+# Die .gitignore des generierten Projekts liegt als .gitignore.jinja im
+# Schablonenbaum unter template/.
+
+# Python-Build- und Cache-Artefakte
+__pycache__/
+*.pyc
+*.pyo
+
+# Virtuelle Environments (falls jemand das Template lokal auscheckt und
+# dort versehentlich uv sync ausfuehrt)
+.venv/
+
+# Editor- und OS-spezifische Dateien
+.idea/
+.vscode/
+.DS_Store

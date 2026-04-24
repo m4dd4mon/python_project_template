@@ -1,0 +1,55 @@
+# projekt
+
+Ein Python-Projekt mit uv, ruff und pytest.
+
+## Installation
+
+Voraussetzungen: [uv](https://docs.astral.sh/uv/) und optional Docker fuer
+die lokale Datenbank-Instanz.
+
+```bash
+uv sync
+```
+
+Das legt ein virtuelles Environment unter `.venv/` an und installiert alle
+Abhaengigkeiten aus `pyproject.toml`.
+
+## Entwicklung
+
+```bash
+# Linting und Formatierung
+uv run ruff check .
+uv run ruff format .
+
+# Typpruefung
+uv run mypy src/
+
+# Tests
+uv run pytest
+```
+
+Vor jedem Commit muessen `ruff check`, `mypy` und `pytest` gruen sein
+(Definition of Done).
+
+## Tests
+
+```bash
+uv run pytest                 # alle Tests
+uv run pytest -x              # beim ersten Fehler abbrechen
+uv run pytest -m "not slow"   # langsame Tests ueberspringen
+uv run pytest --cov=src       # mit Coverage-Messung
+```
+
+## Konfiguration
+
+Die Konfiguration ist dreistufig getrennt:
+
+- **Werkzeug-Config** (ruff, mypy, pytest) liegt in `pyproject.toml`.
+- **Anwendungs-Config** (nicht-sensitiv) liegt in
+  `src/projekt/resources/config.yaml`.
+- **Secrets und Overrides** (DB-URLs, API-Tokens) liegen in `.env` und
+  gehoeren NIEMALS ins Git. Siehe `.env.example` fuer die Vorlage.
+
+## Projektstruktur
+
+Siehe `docs/project-structure.md`.

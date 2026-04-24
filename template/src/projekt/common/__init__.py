@@ -1,0 +1,1 @@
+"""Common: Querschnittsfunktionen (Config, Logging)."""

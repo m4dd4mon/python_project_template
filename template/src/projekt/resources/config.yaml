@@ -1,0 +1,11 @@
+# Nicht-sensitive Laufzeit-Standardwerte.
+# Sensitive Werte (Passwoerter, API-Tokens) gehoeren in die .env.
+
+paths:
+  data_raw: "data/raw"
+  data_processed: "data/processed"
+  data_models: "data/models"
+  logs: "logs"
+
+logging:
+  level: "INFO"

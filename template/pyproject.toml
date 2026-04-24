@@ -1,0 +1,88 @@
+# ── Paket-Metadaten ────────────────────────────────────────────────
+[project]
+name = "projekt"
+version = "0.1.0"
+description = "Ein Python-Projekt mit uv, ruff und pytest."
+readme = "README.md"
+requires-python = ">=3.12"
+authors = [
+    { name = "m4dd4mon", email = "m4dd4mon@gmail.com" },
+]
+
+dependencies = [
+    # Konfiguration und Datenvalidierung
+    "pydantic>=2.0",
+    "pydantic-settings>=2.0",
+    "pyyaml>=6.0",
+    # Datenbank-Anbindung (Dual-DB-Design)
+    "sqlalchemy>=2.0",
+    "alembic>=1.13",
+    "psycopg[binary]>=3.1",
+]
+
+[project.optional-dependencies]
+dev = [
+    "ruff>=0.6",
+    "mypy>=1.11",
+    "pytest>=8.0",
+    "pytest-cov>=5.0",
+]
+
+# Entry-Points fuer die drei Oberflaechen. Aufruf nach `uv sync` per
+# `uv run projekt-web`, `uv run projekt-gui`, `uv run projekt-cli`.
+[project.scripts]
+projekt-web = "projekt.web.app:main"
+projekt-gui = "projekt.gui.app:main"
+projekt-cli = "projekt.cli.main:main"
+
+
+# ── Build-Backend ──────────────────────────────────────────────────
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/projekt"]
+
+
+# ── ruff ───────────────────────────────────────────────────────────
+[tool.ruff]
+src = ["src"]
+line-length = 88
+target-version = "py312"
+
+[tool.ruff.lint]
+# E/W = pycodestyle, F = pyflakes, I = isort, UP = pyupgrade
+select = ["E", "W", "F", "I", "UP"]
+ignore = ["E501"]   # Zeilenlaenge ueberlassen wir dem Formatter
+
+[tool.ruff.lint.per-file-ignores]
+"tests/*" = ["F401"]   # Unbenutzte Importe in Tests oft absichtlich (Fixtures)
+
+[tool.ruff.format]
+quote-style = "double"
+
+
+# ── mypy ───────────────────────────────────────────────────────────
+[tool.mypy]
+mypy_path = "src"
+packages = ["projekt"]
+python_version = "3.12"
+warn_return_any = true
+warn_unused_ignores = true
+disallow_untyped_defs = true
+
+# Bibliotheken ohne Typ-Stubs nicht anmeckern
+[[tool.mypy.overrides]]
+module = ["sqlalchemy.*", "alembic.*"]
+ignore_missing_imports = true
+
+
+# ── pytest ─────────────────────────────────────────────────────────
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = ["--tb=short", "--strict-markers"]
+markers = [
+    "slow: Tests die laenger dauern, mit -m 'not slow' ueberspringen",
+    "integration: Tests die echte DB oder externe Dienste brauchen",
+]

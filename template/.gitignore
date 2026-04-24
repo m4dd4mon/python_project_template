@@ -1,0 +1,27 @@
+# Virtuelles Environment
+.venv/
+
+# Python-Cache und Build-Artefakte
+__pycache__/
+*.pyc
+*.pyo
+*.egg-info/
+build/
+dist/
+
+# Secrets (NIEMALS committen)
+.env
+
+# Laufzeitdaten: alles ignorieren ausser den .gitkeep-Markern
+data/**
+!data/**/
+!data/**/.gitkeep
+
+# Logs: nur .gitkeep bleibt versioniert
+logs/*
+!logs/.gitkeep
+
+# Editor / OS
+.DS_Store
+.idea/
+.vscode/

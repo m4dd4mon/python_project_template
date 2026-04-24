@@ -1,0 +1,25 @@
+# Compose-Setup fuer die lokale Entwicklungs-Datenbank.
+# Der Postgres-Service liegt hinter einem Profil und startet NICHT
+# automatisch. Aufruf nur auf expliziten Wunsch:
+#
+#   docker compose --profile local-db up -d
+#
+# Ein reines `docker compose up` ignoriert den Service komplett, damit
+# er nicht stoert, wenn nur gegen eine externe DB gearbeitet wird.
+
+services:
+  db-local:
+    image: postgres:16-alpine
+    profiles: ["local-db"]
+    container_name: projekt_db_local
+    environment:
+      POSTGRES_USER: projekt
+      POSTGRES_PASSWORD: devpass
+      POSTGRES_DB: projekt
+    ports:
+      - "5432:5432"
+    # Bind-Mount auf den Projektordner, damit die DB-Daten sichtbar sind
+    # und durch die .gitignore vom Commit ausgeschlossen werden.
+    volumes:
+      - ./data/db/postgres:/var/lib/postgresql/data
+    restart: unless-stopped

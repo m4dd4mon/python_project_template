@@ -1,6 +1,6 @@
-# projekt
+# {{ project_name }}
 
-Ein Python-Projekt mit uv, ruff und pytest.
+{{ project_description }}
 
 ## Installation
 
@@ -46,7 +46,7 @@ Die Konfiguration ist dreistufig getrennt:
 
 - **Werkzeug-Config** (ruff, mypy, pytest) liegt in `pyproject.toml`.
 - **Anwendungs-Config** (nicht-sensitiv) liegt in
-  `src/projekt/resources/config.yaml`.
+  `src/{{ package_slug }}/resources/config.yaml`.
 - **Secrets und Overrides** (DB-URLs, API-Tokens) liegen in `.env` und
   gehoeren NIEMALS ins Git. Siehe `.env.example` fuer die Vorlage.
 

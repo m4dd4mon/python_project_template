@@ -1,0 +1,45 @@
+# CLAUDE.md
+
+This file provides guidance to Claude Code when working with code in
+this repository.
+
+## Project Overview
+
+{{ project_description }}
+
+Stack: Python {{ python_version }}, uv, ruff, pytest{% if use_database %}, SQLAlchemy, Alembic{% endif %}.
+
+## Development Commands
+
+```bash
+uv sync                      # Abhaengigkeiten installieren
+uv run pytest                # Tests ausfuehren
+uv run ruff check .          # Linten
+uv run ruff format .         # Formatieren
+uv run mypy src/             # Typpruefung
+```
+
+{% if use_database -%}
+## Datenbank-Modi
+
+Dieses Projekt unterstuetzt zwei Datenbank-Verbindungen parallel: eine
+externe Hauptdatenbank (`DATABASE_URL_MAIN` in `.env`) und eine lokale
+Docker-Instanz (`DATABASE_URL_LOCAL`). Beide sind optional und koennen
+einzeln oder gemeinsam betrieben werden; siehe `.env.example` fuer die
+Konfiguration.
+
+Die lokale Docker-Instanz wird nicht automatisch mitgestartet. Aufruf:
+
+```bash
+docker compose --profile local-db up -d
+```
+
+{% endif -%}
+## Definition of Done
+
+Vor jedem Commit muessen `uv run ruff check .`, `uv run mypy src/` und
+`uv run pytest` gruen sein.
+
+## Projektstruktur
+
+Fuer die aktuelle Verzeichnisstruktur siehe `docs/project-structure.md`.

@@ -11,11 +11,11 @@ services:
   db-local:
     image: postgres:16-alpine
     profiles: ["local-db"]
-    container_name: projekt_db_local
+    container_name: {{ package_slug }}_db_local
     environment:
-      POSTGRES_USER: projekt
+      POSTGRES_USER: {{ package_slug }}
       POSTGRES_PASSWORD: devpass
-      POSTGRES_DB: projekt
+      POSTGRES_DB: {{ package_slug }}
     ports:
       - "5432:5432"
     # Bind-Mount auf den Projektordner, damit die DB-Daten sichtbar sind

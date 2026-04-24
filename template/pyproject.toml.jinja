@@ -1,12 +1,12 @@
 # ── Paket-Metadaten ────────────────────────────────────────────────
 [project]
-name = "projekt"
+name = "{{ package_slug }}"
 version = "0.1.0"
-description = "Ein Python-Projekt mit uv, ruff und pytest."
+description = "{{ project_description }}"
 readme = "README.md"
-requires-python = ">=3.12"
+requires-python = ">={{ python_version }}"
 authors = [
-    { name = "m4dd4mon", email = "m4dd4mon@gmail.com" },
+    { name = "{{ author_name }}", email = "{{ author_email }}" },
 ]
 
 dependencies = [
@@ -14,10 +14,12 @@ dependencies = [
     "pydantic>=2.0",
     "pydantic-settings>=2.0",
     "pyyaml>=6.0",
+{%- if use_database %}
     # Datenbank-Anbindung (Dual-DB-Design)
     "sqlalchemy>=2.0",
     "alembic>=1.13",
     "psycopg[binary]>=3.1",
+{%- endif %}
 ]
 
 [project.optional-dependencies]
@@ -28,13 +30,20 @@ dev = [
     "pytest-cov>=5.0",
 ]
 
-# Entry-Points fuer die drei Oberflaechen. Aufruf nach `uv sync` per
-# `uv run projekt-web`, `uv run projekt-gui`, `uv run projekt-cli`.
+{% if use_web or use_gui or use_cli -%}
+# Entry-Points fuer die aktivierten Oberflaechen. Aufruf nach `uv sync`
+# per `uv run {{ package_slug }}-<oberflaeche>`.
 [project.scripts]
-projekt-web = "projekt.web.app:main"
-projekt-gui = "projekt.gui.app:main"
-projekt-cli = "projekt.cli.main:main"
-
+{% if use_web -%}
+{{ package_slug }}-web = "{{ package_slug }}.web.app:main"
+{% endif -%}
+{% if use_gui -%}
+{{ package_slug }}-gui = "{{ package_slug }}.gui.app:main"
+{% endif -%}
+{% if use_cli -%}
+{{ package_slug }}-cli = "{{ package_slug }}.cli.main:main"
+{% endif %}
+{% endif -%}
 
 # ── Build-Backend ──────────────────────────────────────────────────
 [build-system]
@@ -42,14 +51,14 @@ requires = ["hatchling"]
 build-backend = "hatchling.build"
 
 [tool.hatch.build.targets.wheel]
-packages = ["src/projekt"]
+packages = ["src/{{ package_slug }}"]
 
 
 # ── ruff ───────────────────────────────────────────────────────────
 [tool.ruff]
 src = ["src"]
 line-length = 88
-target-version = "py312"
+target-version = "py{{ python_version | replace('.', '') }}"
 
 [tool.ruff.lint]
 # E/W = pycodestyle, F = pyflakes, I = isort, UP = pyupgrade
@@ -66,8 +75,8 @@ quote-style = "double"
 # ── mypy ───────────────────────────────────────────────────────────
 [tool.mypy]
 mypy_path = "src"
-packages = ["projekt"]
-python_version = "3.12"
+packages = ["{{ package_slug }}"]
+python_version = "{{ python_version }}"
 warn_return_any = true
 warn_unused_ignores = true
 disallow_untyped_defs = true

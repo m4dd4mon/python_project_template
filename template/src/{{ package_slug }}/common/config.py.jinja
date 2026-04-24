@@ -1,0 +1,32 @@
+"""Anwendungs-Konfiguration.
+
+Zentrale Settings-Klasse auf Basis von pydantic-settings. Liest Defaults
+aus dem Code, ueberschreibt sie mit Werten aus .env und Umgebungsvariablen.
+"""
+
+from __future__ import annotations
+
+from pydantic_settings import BaseSettings, SettingsConfigDict
+
+
+class Settings(BaseSettings):
+    """Runtime settings loaded from environment and .env."""
+
+    model_config = SettingsConfigDict(
+        env_file=".env",
+        env_file_encoding="utf-8",
+        case_sensitive=False,
+    )
+
+    log_level: str = "INFO"
+{% if use_database %}
+    # ── Datenbank-URLs ────────────────────────────────────────────
+    # Beide Felder sind optional. None bedeutet "nicht konfiguriert".
+    # ACHTUNG: Die URLs enthalten Credentials und duerfen NIEMALS
+    # geloggt oder in Fehlermeldungen ausgegeben werden. Beim Schreiben
+    # von Log-Zeilen explizit maskieren oder weglassen.
+    database_url_main: str | None = None
+    database_url_local: str | None = None
+{% endif %}
+
+settings = Settings()

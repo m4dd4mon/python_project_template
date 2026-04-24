@@ -1,0 +1,27 @@
+#!/usr/bin/env bash
+# Alembic-Migration gegen beide konfigurierten Datenbank-URLs.
+# Laedt .env automatisch, falls vorhanden, und ueberspringt jede URL,
+# die nicht gesetzt ist. Aufruf: ./scripts/migrate-all.sh
+
+set -euo pipefail
+
+if [ -f .env ]; then
+    set -a
+    # shellcheck disable=SC1091
+    source .env
+    set +a
+fi
+
+if [ -n "${DATABASE_URL_MAIN:-}" ]; then
+    echo ">>> Migration MAIN"
+    uv run alembic -x db_url="$DATABASE_URL_MAIN" upgrade head
+else
+    echo "DATABASE_URL_MAIN nicht gesetzt — ueberspringe MAIN"
+fi
+
+if [ -n "${DATABASE_URL_LOCAL:-}" ]; then
+    echo ">>> Migration LOCAL"
+    uv run alembic -x db_url="$DATABASE_URL_LOCAL" upgrade head
+else
+    echo "DATABASE_URL_LOCAL nicht gesetzt — ueberspringe LOCAL"
+fi

@@ -16,7 +16,33 @@ _min_copier_version: "9.0.0"
 # ins Git eingecheckt und ist die Grundlage fuer spaetere copier update.
 _answers_file: .copier-answers.yml
 
-# _exclude und _tasks folgen in Prompt 7, sobald die Schablone steht.
+# Dateien und Muster, die NICHT ins Zielprojekt kopiert werden.
+# Statische Muster wirken immer, konditionale Ausdruecke nur bei
+# passender Feature-Antwort.
+_exclude:
+  - "*.pyc"
+  - "__pycache__"
+  - ".DS_Store"
+  - "{% if not use_database %}docker-compose.yml{% endif %}"
+  - "{% if not use_database %}alembic.ini{% endif %}"
+  - "{% if not use_database %}alembic{% endif %}"
+  - "{% if not use_database %}src/{{ package_slug }}/data{% endif %}"
+  - "{% if not use_database %}scripts/migrate-all.sh{% endif %}"
+  - "{% if not use_database %}scripts/migrate-all.ps1{% endif %}"
+  - "{% if not use_web %}src/{{ package_slug }}/web{% endif %}"
+  - "{% if not use_gui %}src/{{ package_slug }}/gui{% endif %}"
+  - "{% if not use_cli %}src/{{ package_slug }}/cli{% endif %}"
+  - "{% if not include_claude_md %}CLAUDE.md{% endif %}"
+
+# Post-Generation-Tasks laufen nach dem Rendern im Zielverzeichnis.
+# Reihenfolge beachten: git init vor uv sync, damit uv ein vorhandenes
+# Repo sieht; git commit ganz am Schluss mit allem, was uv erzeugt hat.
+_tasks:
+  - "git init -b main"
+  - "uv python pin {{ python_version }}"
+  - "uv sync"
+  - "git add ."
+  - 'git commit -m "Initial commit from template"'
 
 
 # ── Fragenkatalog ────────────────────────────────────────────────────

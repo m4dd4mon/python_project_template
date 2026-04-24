@@ -1,0 +1,21 @@
+"""Session-Factories fuer das Dual-DB-Setup.
+
+Jede Factory ist `None`, wenn die zugehoerige Engine `None` ist. Der
+Applikationscode pruefe vor dem Oeffnen einer Session explizit auf
+`is not None` und reiche die gewaehlte Session als Argument an
+Repository-Instanzen weiter (Dependency Injection), damit nie aus
+Versehen in die falsche Datenbank geschrieben wird.
+"""
+
+from __future__ import annotations
+
+from sqlalchemy.orm import Session, sessionmaker
+
+from {{ package_slug }}.data.engine import engine_local, engine_main
+
+SessionMain: sessionmaker[Session] | None = (
+    sessionmaker(engine_main) if engine_main is not None else None
+)
+SessionLocal: sessionmaker[Session] | None = (
+    sessionmaker(engine_local) if engine_local is not None else None
+)

@@ -1,0 +1,30 @@
+# PowerShell-Pendant zu migrate-all.sh.
+# Alembic-Migration gegen beide konfigurierten Datenbank-URLs.
+# Laedt .env, falls vorhanden, und ueberspringt jede URL, die fehlt.
+# Aufruf: .\scripts\migrate-all.ps1
+
+$ErrorActionPreference = "Stop"
+
+if (Test-Path .env) {
+    Get-Content .env | ForEach-Object {
+        if ($_ -match '^\s*([A-Za-z_][A-Za-z0-9_]*)\s*=\s*(.*)$') {
+            $name = $Matches[1].Trim()
+            $value = $Matches[2].Trim().Trim('"').Trim("'")
+            [Environment]::SetEnvironmentVariable($name, $value, "Process")
+        }
+    }
+}
+
+if ($env:DATABASE_URL_MAIN) {
+    Write-Host ">>> Migration MAIN"
+    uv run alembic -x "db_url=$env:DATABASE_URL_MAIN" upgrade head
+} else {
+    Write-Host "DATABASE_URL_MAIN nicht gesetzt - ueberspringe MAIN"
+}
+
+if ($env:DATABASE_URL_LOCAL) {
+    Write-Host ">>> Migration LOCAL"
+    uv run alembic -x "db_url=$env:DATABASE_URL_LOCAL" upgrade head
+} else {
+    Write-Host "DATABASE_URL_LOCAL nicht gesetzt - ueberspringe LOCAL"
+}

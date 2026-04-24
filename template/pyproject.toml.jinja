@@ -22,7 +22,9 @@ dependencies = [
 {%- endif %}
 ]
 
-[project.optional-dependencies]
+# PEP-735-Dependency-Groups: uv sync installiert die "dev"-Gruppe
+# automatisch mit, ohne dass --extra dev noetig waere.
+[dependency-groups]
 dev = [
     "ruff>=0.6",
     "mypy>=1.11",

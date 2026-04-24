@@ -1,0 +1,36 @@
+"""Engine-Factory und vorkonfigurierte Engines fuer das Dual-DB-Setup.
+
+Zwei Modul-Level-Instanzen stehen zur Verfuegung: `engine_main` und
+`engine_local`. Jede ist `None`, wenn die zugehoerige URL in der .env
+fehlt. Damit laesst sich das Projekt ohne Datenbank, mit einer von
+beiden oder mit beiden gleichzeitig betreiben, ohne dass sich der
+Applikationscode aendert.
+"""
+
+from __future__ import annotations
+
+from sqlalchemy import create_engine
+from sqlalchemy.engine import Engine
+
+from {{ package_slug }}.common.config import settings
+
+
+def make_engine(url: str | None, pool_size: int = 5) -> Engine | None:
+    """Create a SQLAlchemy engine or return None if no URL is configured.
+
+    Args:
+        url: Database URL from configuration; may be None.
+        pool_size: Connection pool size. Prefer a smaller value for
+            secondary instances (e.g. the local Docker DB) to conserve
+            resources, and the default for the main application DB.
+    """
+    if url is None:
+        return None
+    return create_engine(url, pool_size=pool_size, pool_pre_ping=True)
+
+
+# Modul-Level-Instanzen: None, wenn die jeweilige URL fehlt.
+# Kleinerer Pool fuer die lokale Instanz, weil Staging-Verbindungen
+# typischerweise selten und kurz sind.
+engine_main: Engine | None = make_engine(settings.database_url_main, pool_size=5)
+engine_local: Engine | None = make_engine(settings.database_url_local, pool_size=2)

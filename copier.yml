@@ -16,4 +16,98 @@ _min_copier_version: "9.0.0"
 # ins Git eingecheckt und ist die Grundlage fuer spaetere copier update.
 _answers_file: .copier-answers.yml
 
-# Fragenkatalog, _exclude und _tasks folgen in spaeteren Schritten.
+# _exclude und _tasks folgen in Prompt 7, sobald die Schablone steht.
+
+
+# ── Fragenkatalog ────────────────────────────────────────────────────
+# Menschenlesbarer Projektname. Fliesst in README, pyproject.toml und
+# (ueber den abgeleiteten Default) in den package_slug ein.
+project_name:
+  type: str
+  help: "Menschenlesbarer Projektname (z.B. 'Wetterstation Berlin')"
+  placeholder: "Mein Python-Projekt"
+
+# Paket-Slug: gleichzeitig Ordnername des Zielprojekts und Python-
+# Paketname unter src/. Ein einziger Slug statt zweier Varianten, siehe
+# Phase A der Vorgehensweise. Default aus project_name abgeleitet,
+# Validator verhindert Bindestriche und Grossbuchstaben.
+package_slug:
+  type: str
+  help: >
+    Python-Paketname unter src/. Nur Kleinbuchstaben, Ziffern und
+    Unterstriche. Wird auch als Projektordnername verwendet.
+  default: "{{ project_name | lower | replace(' ', '_') | replace('-', '_') }}"
+  validator: >
+    {% if not (package_slug | regex_search('^[a-z][a-z0-9_]*$')) %}
+    Der Paketname muss mit einem Kleinbuchstaben beginnen und darf nur
+    Kleinbuchstaben, Ziffern und Unterstriche enthalten (keine Bindestriche).
+    {% endif %}
+
+# Ein-Satz-Beschreibung fuer README und pyproject.toml.
+project_description:
+  type: str
+  help: "Ein-Satz-Beschreibung fuer README und pyproject.toml"
+  default: "Ein Python-Projekt mit uv, ruff und pytest."
+
+# Autor fuer pyproject.toml [project].authors. Default auf eigenen Namen.
+author_name:
+  type: str
+  help: "Autorenname fuer pyproject.toml"
+  default: "m4dd4mon"
+
+author_email:
+  type: str
+  help: "Autoren-Mail fuer pyproject.toml"
+  default: "m4dd4mon@gmail.com"
+
+# Python-Version wird per uv python pin festgeschrieben und in
+# pyproject.toml als requires-python eingesetzt.
+python_version:
+  type: str
+  help: "Python-Version zum Pinnen"
+  choices:
+    - "3.12"
+    - "3.13"
+    - "3.14"
+  default: "3.14"
+
+# ── Feature-Flags ────────────────────────────────────────────────────
+# Bei use_database=true wird automatisch das Dual-DB-Setup aufgebaut
+# (externe DB + lokale Docker-Instanz parallel, siehe Phase F).
+use_database:
+  type: bool
+  help: "Datenbank-Support (SQLAlchemy, Alembic, Dual-DB-Setup)?"
+  default: true
+
+use_web:
+  type: bool
+  help: "Web-Oberflaeche (Dash/Flask/FastAPI) einbinden?"
+  default: false
+
+use_gui:
+  type: bool
+  help: "Desktop-GUI (Tkinter/PyQt) einbinden?"
+  default: false
+
+use_cli:
+  type: bool
+  help: "CLI-Einstiegspunkt einbinden?"
+  default: true
+
+# CLAUDE.md fuer Claude Code im Projektwurzelverzeichnis. Default true,
+# weil die meisten Projekte Claude Code als Co-Arbeitswerkzeug nutzen.
+include_claude_md:
+  type: bool
+  help: "CLAUDE.md fuer Claude Code erzeugen?"
+  default: false
+
+# Lizenz fuer das generierte Projekt. Bei "proprietary" wird im Template
+# keine LICENSE-Datei angelegt (wird ueber _exclude in Prompt 7 gesteuert).
+license:
+  type: str
+  help: "Lizenz des Projekts"
+  choices:
+    MIT: "MIT"
+    Apache-2.0: "Apache-2.0"
+    "Proprietaer (keine LICENSE-Datei)": "proprietary"
+  default: "MIT"
